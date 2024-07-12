@@ -1,4 +1,3 @@
-@@ -0,0 +1,8 @@
 -- Creates a table with unique users.
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
