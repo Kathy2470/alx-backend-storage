@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Script to find documents in MongoDB collection 'school' where name starts with 'Holberton'
+
+# Usage: ./100-find <database_name>
+# Example: ./100-find my_db
+
+database_name=$1
+
+mongo $database_name <<EOF
+db.school.find({ "name": /^Holberton/i })
+EOF
