@@ -13,10 +13,10 @@ from functools import wraps
 def count_calls(method: Callable) -> Callable:
     """
     Decorator that counts the number of times a method is called.
-    
+
     Args:
         method (Callable): The method to be decorated.
-    
+
     Returns:
         Callable: The wrapped method with call count increment functionality.
     """
@@ -30,13 +30,14 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwargs)
     return wrapper
 
+
 def call_history(method: Callable) -> Callable:
     """
     Decorator to store the history of inputs and outputs for a particular function.
-    
+
     Args:
         method (Callable): The method to be decorated.
-    
+
     Returns:
         Callable: The wrapped method with call history functionality.
     """
@@ -54,6 +55,7 @@ def call_history(method: Callable) -> Callable:
 
         return output
     return wrapper
+
 
 class Cache:
     """
@@ -125,6 +127,7 @@ class Cache:
         """
         return self.get(key, lambda d: int(d))
 
+
 def replay(method: Callable) -> None:
     """
     Displays the history of calls of a particular function.
@@ -135,10 +138,10 @@ def replay(method: Callable) -> None:
     redis_instance = method.__self__._redis
     input_key = method.__qualname__ + ":inputs"
     output_key = method.__qualname__ + ":outputs"
-    
+
     inputs = redis_instance.lrange(input_key, 0, -1)
     outputs = redis_instance.lrange(output_key, 0, -1)
-    
+
     print(f"{method.__qualname__} was called {len(inputs)} times:")
     for input_val, output_val in zip(inputs, outputs):
         print(f"{method.__qualname__}(*{input_val.decode('utf-8')}) -> {output_val.decode('utf-8')}")
