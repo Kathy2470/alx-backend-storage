@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 This module provides the Cache class for storing data in Redis,
-with a decorator to count method calls.
+with decorators to count method calls and store call history.
 """
 
 import redis
@@ -29,6 +29,31 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwargs)
     return wrapper
 
+def call_history(method: Callable) -> Callable:
+    """
+    Decorator to store the history of inputs and outputs for a particular function.
+    
+    Args:
+        method (Callable): The method to be decorated.
+    
+    Returns:
+        Callable: The wrapped method with call history functionality.
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """
+        Wrapper function to store inputs and outputs history.
+        """
+        input_key = method.__qualname__ + ":inputs"
+        output_key = method.__qualname__ + ":outputs"
+
+        self._redis.rpush(input_key, str(args))
+        output = method(self, *args, **kwargs)
+        self._redis.rpush(output_key, str(output))
+
+        return output
+    return wrapper
+
 class Cache:
     """
     Cache class to interact with Redis.
@@ -42,6 +67,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Stores data in Redis with a randomly generated key.
