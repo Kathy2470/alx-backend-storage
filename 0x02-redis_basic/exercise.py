@@ -85,7 +85,9 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: Optional[Callable] = None) -> Union[str, bytes, int, float, None]:
+    def get(self, key: str, fn: Optional[Callable] = None) -> Union[
+        str, bytes, int, float, None
+    ]:
         """
         Retrieves data from Redis and applies a conversion function if provided.
 
@@ -111,7 +113,8 @@ class Cache:
             key (str): The key of the data to be retrieved.
 
         Returns:
-            Optional[str]: The retrieved data as a UTF-8 string, or None if the key does not exist.
+            Optional[str]: The retrieved data as a UTF-8 string,
+                           or None if the key does not exist.
         """
         return self.get(key, lambda d: d.decode('utf-8'))
 
@@ -123,7 +126,8 @@ class Cache:
             key (str): The key of the data to be retrieved.
 
         Returns:
-            Optional[int]: The retrieved data as an integer, or None if the key does not exist.
+            Optional[int]: The retrieved data as an integer,
+                           or None if the key does not exist.
         """
         return self.get(key, lambda d: int(d))
 
@@ -144,4 +148,5 @@ def replay(method: Callable) -> None:
 
     print(f"{method.__qualname__} was called {len(inputs)} times:")
     for input_val, output_val in zip(inputs, outputs):
-        print(f"{method.__qualname__}(*{input_val.decode('utf-8')}) -> {output_val.decode('utf-8')}")
+        print(f"{method.__qualname__}(*{input_val.decode('utf-8')}) -> "
+              f"{output_val.decode('utf-8')}")
